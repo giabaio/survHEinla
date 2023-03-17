@@ -1,3 +1,3 @@
-# survHE 1.1.3
+# survHEinla 0.0.1
 
 * Added a `NEWS.md` file to track changes to the package.

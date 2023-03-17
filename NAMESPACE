@@ -1,2 +1,9 @@
 export(runINLA)
 import(dplyr)
+import(survHE)
+importFrom("stats", "as.formula", "model.matrix", "pexp", "plnorm",
+           "pweibull", "var")
+importFrom("flexsurv", "hexp", "hgompertz", "hllogis", "hlnorm", "hweibull",
+           "hweibullPH","pgompertz","pllogis","pweibullPH")
+importFrom("INLA","inla.set.control.fixed.default","inla.set.control.family.default",
+           "inla.surv","inla","inla.rmarginal")

@@ -59,7 +59,7 @@ runINLA <- function(x,exArgs) {
   # 'exArgs'. If not, or if specified but for another distribution, use INLA defaults
   cf <- INLA::inla.set.control.family.default()
   if(exists("control.family",where=exArgs)) {
-    abbrs=manipulate_distributions(names(exArgs$control.family))$distr3
+    abbrs=survHE:::manipulate_distributions(names(exArgs$control.family))$distr3
     pos=grep(d3,abbrs)
     if(length(pos)>0) {
       cf <- exArgs$control.family[[pos]]
