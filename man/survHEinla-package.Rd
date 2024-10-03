@@ -2,47 +2,23 @@
 % Please edit documentation in R/survHEinla-package.R
 \docType{package}
 \name{survHEinla-package}
-\alias{survHEinla-package}
 \alias{survHEinla}
-\title{Survival Analysis in Health Economic Evaluation using INLA}
+\alias{survHEinla-package}
+\title{survHEinla: Survival Analysis in Health Economic Evaluation using INLA}
 \description{
-Contains a suite of functions to perform survival analysis with the aim of
-aiding in health economic modelling (extrapolation, model checking and PSA)
+A module to complement the backbone structure of the package survHE and expand its functionality to run survival models under a Bayesian approach (based on Integrated Nested Laplace Approximation; the underlying 'INLA' package is available for download at \url{https://inla.r-inla-download.org/R/stable/}). \doi{10.18637/jss.v095.i14}.
 }
-\details{
-\tabular{ll}{ Package: \tab survHEinla\cr Type: \tab Package\cr Version: \tab
-0.0.1\cr Date: \tab 2022-01-15\cr License: \tab GPL2 \cr LazyLoad: \tab
-yes\cr } Module to expand the facilities of survHE to run Bayesian models using
-INLA
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/giabaio/survHEinla}
+  \item \url{https://gianluca.statistica.it/software/survhe}
+  \item Report bugs at \url{https://github.com/giabaio/survHEinla/issues}
 }
-\examples{
-\dontrun{ 
-# Loads some survival data
-library(survHE)
-data(bc)
-# Fits a parametric model using INLA
-m <- fit.models(formula=Surv(recyrs,censrec)~group,data=bc,
-    distr="exp",method="inla")
-# Print output in tabular format
-print(m)
-# Visualise output in terms of survival curves
-plot(m)
-}
-}
-\references{
-G Baio (2019). survHE: Survival analysis for health economic evaluation
-and cost-effectiveness modelling. Journal of Statistical Software (2020). vol 95,
-14, 1-47. \url{doi:10.18637/jss.v095.i14}
+
 }
 \author{
-Gianluca Baio
+\strong{Maintainer}: Gianluca Baio \email{g.baio@ucl.ac.uk}
 
-Maintainer: Gianluca Baio
 }
-\keyword{Economic}
-\keyword{Evaluation}
-\keyword{Health}
-\keyword{INLA}
-\keyword{Modelling}
-\keyword{Survival}
-\keyword{using}
+\keyword{internal}
