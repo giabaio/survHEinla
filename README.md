@@ -10,8 +10,14 @@ remotes::install_github("giabaio/survHEinla")
 ```
 Alternatively, it is possible to install `survHEinla` from source with the following command.
 ```
-install.packages("survHEinla",repos="https://giabaio.github.io/drat/",type="source")
+install.packages(
+  "survHEinla",
+  repos=c("https://giabaio.github.io/drat/","https://www.stats.bris.ac.uk/R/"),
+  type="source",
+  dependencies=TRUE
+)
 ```
+(NB: You can replace the CRAN mirror `https://www.stats.bris.ac.uk/R/` for any other --- see [here](https://cran.r-project.org/)).
 
 
 ## Usage
