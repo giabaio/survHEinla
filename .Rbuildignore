@@ -1,0 +1,5 @@
+man-roxygen
+^.*\.Rproj$
+^\.Rproj\.user$
+^README.md
+^\.github^
