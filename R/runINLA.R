@@ -337,3 +337,53 @@ lik_gom_inla <- function(model,nsim,time_max,t,d,formula,data) {
   npars <- 2 + (length(all.vars(formula))-1)
   list(logf=logf,logf.hat=logf.hat,npars=npars,f=NULL,f.bar=NULL,s=NULL,s.bar=NULL)
 }
+
+lik_gam_inla <- function(model,nsim,time_max,t,d,formula,data) {
+  # Gamma survival model (family="gammasurv" in INLA).
+  # Parameterisation:  E[t_scaled] = exp(eta),  shape = phi (precision hyperpar).
+  # Rate on scaled time:  rate_scaled = phi / exp(eta)
+  # Back-transform intercept:  +log(time_max)  (same direction as lno, because
+  # the link is log(mean) and t_scaled = t/time_max => eta_true = eta_inla + log(time_max))
+  # Rate on original scale:  phi / exp(eta_true)
+  # Hazard:  h(t) = dgamma(t, shape, rate) / pgamma(t, shape, rate, lower.tail=FALSE)
+
+  # Sample shape (phi) from its marginal posterior
+  phi <- INLA::inla.rmarginal(nsim, model$marginals.hyperpar[[1]])
+  # Sample fixed effects
+  beta <- lapply(1:nrow(model$summary.fixed), function(i) {
+    INLA::inla.rmarginal(nsim, model$marginals.fixed[[i]])
+  })
+  names(beta) <- colnames(model$model.matrix)
+  beta <- beta %>% bind_cols()
+  # Rescale intercept from [0,1] time scale to original time scale
+  if (grep("(Intercept)", colnames(model$model.matrix)) > 0) {
+    beta[, grep("(Intercept)", colnames(model$model.matrix))] <-
+      beta[, grep("(Intercept)", colnames(model$model.matrix))] + log(time_max)
+  }
+  phi.hat   <- mean(phi)
+  beta.hat  <- beta %>% summarise_all(mean) %>% as.numeric()
+  linpred     <- as.matrix(beta)   %*% t(model.matrix(formula, data))
+  linpred.hat <- beta.hat          %*% t(model.matrix(formula, data))
+
+  # Log-likelihood: d_i * log h(t_i) + log S(t_i)
+  # where h = dgamma/(1-pgamma) and log S = pgamma(..., lower.tail=FALSE, log.p=TRUE)
+  logf <- matrix(
+    unlist(lapply(1:nrow(linpred), function(i) {
+      rate_i <- phi[i] / exp(linpred[i, ])
+      d * log(dgamma(t, shape = phi[i], rate = rate_i) /
+                pgamma(t, shape = phi[i], rate = rate_i, lower.tail = FALSE)) +
+        pgamma(t, shape = phi[i], rate = rate_i, lower.tail = FALSE, log.p = TRUE)
+    })),
+    nrow = nrow(linpred), byrow = TRUE)
+  logf.hat <- matrix(
+    {
+      rate.hat <- phi.hat / exp(linpred.hat)
+      d * log(dgamma(t, shape = phi.hat, rate = rate.hat) /
+                pgamma(t, shape = phi.hat, rate = rate.hat, lower.tail = FALSE)) +
+        pgamma(t, shape = phi.hat, rate = rate.hat, lower.tail = FALSE, log.p = TRUE)
+    },
+    nrow = 1)
+  # Number of parameters: phi (shape) + fixed effects (intercept + covariates)
+  npars <- 1 + nrow(model$summary.fixed)
+  list(logf = logf, logf.hat = logf.hat, npars = npars, f = NULL, f.bar = NULL)
+}
